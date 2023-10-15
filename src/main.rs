@@ -1,6 +1,5 @@
 use bevy::prelude::*;
-
-const BG_GREEN: Color = Color::rgb(0.52, 0.73, 0.17);
+use rust_snake::{board::spawn_board, colors::COLORS};
 
 fn main() {
     // DefaultPlugins bundles plugins for window, log and much more
@@ -8,12 +7,13 @@ fn main() {
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 title: "Snake!".to_string(),
-                ..Default::default()
+                ..default()
             }),
-            ..Default::default()
+            ..default()
         }))
-        .insert_resource(ClearColor(BG_GREEN))
+        .insert_resource(ClearColor(COLORS.background))
         .add_systems(Startup, setup)
+        .add_systems(Startup, spawn_board)
         .run();
 }
 
