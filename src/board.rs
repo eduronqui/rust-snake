@@ -24,7 +24,8 @@ pub struct Position {
 
 impl Board {
     fn new(size: u8) -> Self {
-        let physical_size = f32::from(size) * TILE_SIZE + f32::from(size + 1) * TILE_SPACER;
+        let physical_size =
+            f32::from(size) * TILE_SIZE + f32::from(size + 1) * TILE_SPACER;
         Board {
             size,
             physical_size,
@@ -45,7 +46,10 @@ pub fn spawn_board(mut commands: Commands, snake: Res<Snake>) {
         .spawn(SpriteBundle {
             sprite: Sprite {
                 color: COLORS.board,
-                custom_size: Some(Vec2::new(board.physical_size, board.physical_size)),
+                custom_size: Some(Vec2::new(
+                    board.physical_size,
+                    board.physical_size,
+                )),
                 ..default()
             },
             ..default()

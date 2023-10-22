@@ -11,7 +11,10 @@ pub struct Snake {
 impl Default for Snake {
     fn default() -> Self {
         Self {
-            segments: VecDeque::from([Position { x: 4, y: 4 }, Position { x: 3, y: 4 }]),
+            segments: VecDeque::from([
+                Position { x: 4, y: 4 },
+                Position { x: 3, y: 4 },
+            ]),
         }
     }
 }
