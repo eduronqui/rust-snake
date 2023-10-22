@@ -16,7 +16,7 @@ struct Board {
     physical_size: f32,
 }
 
-#[derive(Debug, Component, Clone)]
+#[derive(Debug, Component, Clone, PartialEq, Eq)]
 pub struct Position {
     pub x: u8,
     pub y: u8,

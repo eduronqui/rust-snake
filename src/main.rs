@@ -1,5 +1,9 @@
+use std::time::Duration;
+
 use bevy::prelude::*;
-use rust_snake::{board::spawn_board, colors::COLORS, snake::Snake};
+use rust_snake::{
+    board::spawn_board, colors::COLORS, gameplay::tick, snake::Snake,
+};
 
 fn main() {
     // DefaultPlugins bundles plugins for window, log and much more
@@ -11,10 +15,14 @@ fn main() {
             }),
             ..default()
         }))
+        // Controlling the time interval for fixed updates (tick)
+        .insert_resource(FixedTime::new(Duration::from_millis(1000)))
         .insert_resource(ClearColor(COLORS.background))
         .init_resource::<Snake>()
         .add_systems(Startup, setup)
         .add_systems(Startup, spawn_board)
+        // events that run on a fixed interval
+        .add_systems(FixedUpdate, tick)
         .run();
 }
 
