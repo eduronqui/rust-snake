@@ -1,16 +1,25 @@
 use bevy::prelude::*;
 use itertools::Itertools;
 
-use crate::colors::COLORS;
+use crate::{colors::COLORS, snake::Snake};
 
 const BOARD_SIZE: u8 = 20;
 const TILE_SIZE: f32 = 30.0;
 const TILE_SPACER: f32 = 0.0;
 
+const BOARD_LAYER_LEVEL: f32 = 1.0;
+const SNAKE_LAYER_LEVEL: f32 = 2.0;
+
 #[derive(Component)]
 struct Board {
     size: u8,
     physical_size: f32,
+}
+
+#[derive(Debug, Component, Clone)]
+pub struct Position {
+    pub x: u8,
+    pub y: u8,
 }
 
 impl Board {
@@ -29,7 +38,7 @@ impl Board {
     }
 }
 
-pub fn spawn_board(mut commands: Commands) {
+pub fn spawn_board(mut commands: Commands, snake: Res<Snake>) {
     let board = Board::new(BOARD_SIZE);
 
     commands
@@ -56,11 +65,31 @@ pub fn spawn_board(mut commands: Commands) {
                     transform: Transform::from_xyz(
                         board.cell_position_to_physical(x),
                         board.cell_position_to_physical(y),
-                        1.0,
+                        BOARD_LAYER_LEVEL,
                     ),
                     ..default()
                 });
             }
         })
         .insert(board);
+
+    let board = Board::new(BOARD_SIZE);
+
+    for segment in snake.segments.iter() {
+        commands
+            .spawn(SpriteBundle {
+                sprite: Sprite {
+                    color: COLORS.snake,
+                    custom_size: Some(Vec2::new(TILE_SIZE, TILE_SIZE)),
+                    ..default()
+                },
+                transform: Transform::from_xyz(
+                    board.cell_position_to_physical(segment.x),
+                    board.cell_position_to_physical(segment.y),
+                    SNAKE_LAYER_LEVEL,
+                ),
+                ..default()
+            })
+            .insert(segment.clone());
+    }
 }

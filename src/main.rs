@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use rust_snake::{board::spawn_board, colors::COLORS};
+use rust_snake::{board::spawn_board, colors::COLORS, snake::Snake};
 
 fn main() {
     // DefaultPlugins bundles plugins for window, log and much more
@@ -12,6 +12,7 @@ fn main() {
             ..default()
         }))
         .insert_resource(ClearColor(COLORS.background))
+        .init_resource::<Snake>()
         .add_systems(Startup, setup)
         .add_systems(Startup, spawn_board)
         .run();
