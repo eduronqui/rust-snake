@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{ecs::system::Command, prelude::*};
 use itertools::Itertools;
 
 use crate::{colors::COLORS, snake::Snake};
@@ -16,10 +16,14 @@ struct Board {
     physical_size: f32,
 }
 
-#[derive(Debug, Component, Clone, PartialEq, Eq)]
+#[derive(Debug, Component, Clone, Copy, PartialEq, Eq)]
 pub struct Position {
     pub x: u8,
     pub y: u8,
+}
+
+pub struct SpawnSnakeSegments {
+    pub position: Position,
 }
 
 impl Board {
@@ -77,10 +81,16 @@ pub fn spawn_board(mut commands: Commands, snake: Res<Snake>) {
         })
         .insert(board);
 
-    let board = Board::new(BOARD_SIZE);
-
     for segment in snake.segments.iter() {
-        commands
+        commands.add(SpawnSnakeSegments { position: *segment });
+    }
+}
+
+impl Command for SpawnSnakeSegments {
+    fn apply(self, world: &mut World) {
+        let board = world.query::<&Board>().iter(world).next().unwrap();
+
+        world
             .spawn(SpriteBundle {
                 sprite: Sprite {
                     color: COLORS.snake,
@@ -88,12 +98,12 @@ pub fn spawn_board(mut commands: Commands, snake: Res<Snake>) {
                     ..default()
                 },
                 transform: Transform::from_xyz(
-                    board.cell_position_to_physical(segment.x),
-                    board.cell_position_to_physical(segment.y),
+                    board.cell_position_to_physical(self.position.x),
+                    board.cell_position_to_physical(self.position.y),
                     SNAKE_LAYER_LEVEL,
                 ),
                 ..default()
             })
-            .insert(segment.clone());
+            .insert(self.position);
     }
 }

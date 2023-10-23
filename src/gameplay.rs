@@ -1,4 +1,7 @@
-use crate::{board::Position, snake::Snake};
+use crate::{
+    board::{Position, SpawnSnakeSegments},
+    snake::Snake,
+};
 use bevy::prelude::*;
 
 pub fn tick(
@@ -6,12 +9,16 @@ pub fn tick(
     mut snake: ResMut<Snake>,
     positions: Query<(Entity, &Position)>,
 ) {
-    dbg!("tick!");
-
-    let mut next_position = snake.segments[0].clone();
+    let mut next_position = snake.segments[0];
     next_position.x += 1;
 
     snake.segments.push_front(next_position);
+    commands.add({
+        SpawnSnakeSegments {
+            position: next_position,
+        }
+    });
+
     let old_tail = snake.segments.pop_back().unwrap();
 
     if let Some((entity, _)) =
